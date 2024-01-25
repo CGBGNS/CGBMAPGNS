@@ -126,7 +126,6 @@ table.redTable tfoot .links a{
     metrics: [
       "oWaiting",
       "oInteracting",
-      "oAlerting",
       "oMemberUsers",
       "oActiveUsers",
       "oOnQueueUsers",
@@ -280,10 +279,8 @@ function displayData(data1stAPI,data2ndAPI,data3rdAPI) {
                         <th>Tipo</th>
                         <th>Interacting</th>
                         <th>Waiting</th>
-                        <th>Alerting</th>
                         <th>Miembros</th>
                         <th>Longest Waiting</th>
-                        <th>Gestion Contacto</th>
                       </tr>`;
     queueData.append(headerRow);
 const undesiredMediaTypes = ["message", "chat", "email"];
@@ -312,10 +309,9 @@ const undesiredMediaTypes = ["message", "chat", "email"];
                     <td>${mediaType}</td>
                     <td>${getMetricValue(dataItems, "oInteracting")}</td>
                     <td>${iWaitingAPI2}</td>	
-					          <td>${getMetricValue(dataItems, "oAlerting")}</td>
                     <td>${getMetricValue(dataItems, "oMemberUsers")}</td>                    
 					          <td>${formatTime(lgtAPI2)}</td>			
-                    <td>${getStatusMetricValue(dataItems, "09285548-27dc-4693-b348-26ce839850da")}</td>
+
                   </tr>`;
       
 
