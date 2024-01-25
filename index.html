@@ -77,6 +77,7 @@ table.redTable tfoot .links a{
   const CLIENT_ID = '50999a4b-409c-4846-a249-4357e0e293a5';
   const ENVIRONMENT = 'mypurecloud.de';
   const API_ENDPOINT = 'https://api.mypurecloud.de/api/v2/analytics/queues/observations/query';
+  const API_ENDPOINT2 = 'https://api.mypurecloud.de/api/v2/analytics/conversations/activity/query';
   const REDIRECT_URI = 'https://CGBGNS.github.io/CGBMAPGNS/index.html';
 
   var gToken = getParameterByName('access_token');
@@ -120,6 +121,7 @@ table.redTable tfoot .links a{
   dimension: "queueId",
   value: queueId
 }));
+
   const requestData = {
     metrics: [
       "oWaiting",
@@ -145,6 +147,36 @@ table.redTable tfoot .links a{
     ]
   };
 
+  const requestData2ndAPI = {
+	"order": "asc",
+	"filter": {
+		"type": "and",
+		"clauses": [
+			{
+				"type": "or",
+				"predicates": predicates
+			}
+		],
+		"predicates": [
+			{
+				"dimension": "mediaType",
+				"value": "voice"
+			}
+		]
+	},
+	"groupBy": [
+		"queueId"
+	],
+	"peekAtLast": true,
+	"metrics": [
+		{
+			"metric": "oWaiting",
+			"details": true
+		}
+	],
+	"subscribe": true
+   };
+
   function getParameterByName(name) {
     name = name.replace(/[\\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\#&]" + name + "=([^&#]*)"),
@@ -163,11 +195,30 @@ table.redTable tfoot .links a{
       data: JSON.stringify(requestData),
       contentType: 'application/json',
       success: function(data) {
-        displayData(data);
+        getSecondAPIData(data);
       }
     });
   }
 
+    
+  function getSecondAPIData(data1stAPI){
+   
+   $.ajax({
+     url: API_ENDPOINT2,
+     type: 'POST',
+     beforeSend: function(xhr) {
+       xhr.setRequestHeader('Authorization', 'Bearer ' + gToken);
+     },
+     data: JSON.stringify(requestData2ndAPI),
+     contentType: 'application/json',
+     success: function(data2ndAPI) {
+     displayData(data1stAPI,data2ndAPI);
+    }
+   });
+
+}
+
+  
 function displayData(data) {
   const queueData = $("#queueData");
   queueData.empty();
