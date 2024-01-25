@@ -177,6 +177,27 @@ table.redTable tfoot .links a{
 	"subscribe": true
    };
 
+   const requestData3rdAPI = 
+{
+  "filter": {
+    "type": "and",
+    "clauses": [
+      {
+        "type": "or",
+        "predicates": predicates
+      }
+    ]
+  },
+  "metrics": [
+    "oUserPresences"
+  ],
+  "detailMetrics": [
+    "oUserPresences"
+  ]
+};
+
+
+
   function getParameterByName(name) {
     name = name.replace(/[\\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\#&]" + name + "=([^&#]*)"),
@@ -212,7 +233,24 @@ table.redTable tfoot .links a{
      data: JSON.stringify(requestData2ndAPI),
      contentType: 'application/json',
      success: function(data2ndAPI) {
-     displayData(data1stAPI,data2ndAPI);
+      getThirdAPIData(data1stAPI,data2ndAPI);
+    }
+   });
+
+}
+
+function getThirdAPIData(data1stAPI,data2ndAPI){
+   
+   $.ajax({
+     url: API_ENDPOINT,
+     type: 'POST',
+     beforeSend: function(xhr) {
+       xhr.setRequestHeader('Authorization', 'Bearer ' + gToken);
+     },
+     data: JSON.stringify(requestData3rdAPI),
+     contentType: 'application/json',
+     success: function(data3rdAPI) {
+     displayData(data1stAPI,data2ndAPI,data3rdAPI);
     }
    });
 
