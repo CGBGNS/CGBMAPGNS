@@ -250,8 +250,6 @@
                             <th>Waiting</th>                       	
                 <th>Longest Waiting</th>
                 <th>On Queue (idle+interacting)</th>
-                <th>IDLE</th>
-                <th>Interacting</th>
                 <th>Gestión BackOffice</th>
                 <th>Gestión contacto</th>
                 <th>Descanso</th>
@@ -286,9 +284,7 @@
                         <td>${getMetricValue(dataItems, "oInteracting")}</td>
                         <td>${iWaitingAPI2}</td>	                  
               <td>${formatTime(lgtAPI2)}</td>	
-              <td>${getMetricStateValue(dataItems, "INTERACTING") + getMetricStateValue(dataItems, "IDLE")}</td>
-              <td>${getMetricStateValue(dataItems, "INTERACTING")}</td>
-              <td>${getMetricStateValue(dataItems, "IDLE")}</td>
+              <td>${getMetricStateValue(dataItems, "e08eaf1b-ee47-4fa9-a231-1200e284798f")}</td>
               <td>${getMetricStateValue(dataItems, "6b3a63b6-5634-4aff-8838-674ffadb23de")}</td>
               <td>${getMetricStateValue(dataItems, "09285548-27dc-4693-b348-26ce839850da")}</td>
               <td>${getMetricStateValue(dataItems, "46d1ad03-8828-4161-a6b8-dcec7a42d006")}</td>
