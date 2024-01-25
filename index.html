@@ -130,6 +130,7 @@ table.redTable tfoot .links a{
       "oMemberUsers",
       "oActiveUsers",
       "oOnQueueUsers",
+      "oUserPresences",
       "oOffQueueUsers"
     ],
     filter: {
@@ -143,6 +144,7 @@ table.redTable tfoot .links a{
     },
     detailMetrics: [
       "oWaiting",
+      "oUserPresences",
       "oInteracting"
     ]
   };
@@ -257,13 +259,13 @@ function getThirdAPIData(data1stAPI,data2ndAPI){
 }
 
   
-function displayData(data) {
+function displayData(data1stAPI,data2ndAPI,data3rdAPI) {
   const queueData = $("#queueData");
   queueData.empty();
 
-  if (data.results && Array.isArray(data.results)) {
+  if (data1stAPI.results && Array.isArray(data1stAPI.results)) {
     // Sort results by Queue ID and then by MediaType
-    const sortedResults = data.results.sort((a, b) => {
+    const sortedResults = data1stAPI.results.sort((a, b) => {
       const queueIdComparison = queues[a.group.queueId].name.localeCompare(queues[b.group.queueId].name);
       if (queueIdComparison !== 0) {
         return queueIdComparison;
@@ -281,6 +283,7 @@ function displayData(data) {
                         <th>Alerting</th>
                         <th>Miembros</th>
                         <th>Longest Waiting</th>
+                        <th>Gestion Contacto</th>
                       </tr>`;
     queueData.append(headerRow);
 const undesiredMediaTypes = ["message", "chat", "email"];
@@ -291,16 +294,31 @@ const undesiredMediaTypes = ["message", "chat", "email"];
       const dataItems = result.data;
       const mediaType = group.mediaType || '';
       const longestWaitingDate = getObservationDate(dataItems);
-      const row = `<tr>
+
+      if(data2ndAPI.results != undefined){
+        let g2 = data2ndAPI.results.filter(res => res.group.queueId== group.queueId && mediaType == 'voice');
+        if(g2 != null && g2.length > 0){
+          if(g2[0].entities != undefined && g2[0].entities.length > 0){
+          lgtAPI2 = g2[0].entities[0].activityDate;
+        }
+          if(g2[0].data != undefined && g2[0].data.length > 0){
+            iWaitingAPI2 = g2[0].data[0].count;
+          }
+        }
+      }
+
+                  const row = `<tr>
                     <td>${queues[group.queueId].name}</td>
                     <td>${mediaType}</td>
                     <td>${getMetricValue(dataItems, "oInteracting")}</td>
-                    <td>${getMetricValue(dataItems, "oWaiting")}</td>
-                    <td>${getMetricValue(dataItems, "oAlerting")}</td>
-                    <td>${getMetricValue(dataItems, "oMemberUsers")}</td>
-                    <td>${longestWaitingDate}</td>
+                    <td>${iWaitingAPI2}</td>	
+					          <td>${getMetricValue(dataItems, "oAlerting")}</td>
+                    <td>${getMetricValue(dataItems, "oMemberUsers")}</td>                    
+					          <td>${formatTime(lgtAPI2)}</td>			
+                    <td>${getStatusMetricValue(dataItems, "09285548-27dc-4693-b348-26ce839850da")}</td>
                   </tr>`;
       
+
 if (!undesiredMediaTypes.includes(mediaType)) {
   queueData.append(row);
 }
@@ -324,6 +342,12 @@ function getMetricValue(dataItems, metricName) {
   return metricData ? metricData.stats.count : 0;
 }
 
+function getStatusMetricValue(dataItems, qualifier) {
+  const StateData = dataItems.find(item => item.qualifier === qualifier);
+  if (StateData) {
+  return qualifier ? StateData.stats.count : 0;
+}}
+
   function refreshData() {
     loadData();
   }
@@ -342,6 +366,28 @@ if (window.location.hash) {
   };
   window.location.replace(`https://login.${ENVIRONMENT}/oauth/authorize?` + jQuery.param(queryStringData));
 }
+
+
+function formatTime(sTimeStamp) {
+    
+    if (!sTimeStamp || sTimeStamp.length === 0){
+      return "";
+    }else{	
+      var dtTimeStamp = new Date(sTimeStamp);
+      now = new Date();
+      var sec_num = (now - dtTimeStamp) / 1000;
+      var days    = Math.floor(sec_num / (3600 * 24));
+      var hours   = Math.floor((sec_num - (days * (3600 * 24)))/3600);
+      var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+      var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
+  
+      if (hours   < 10) {hours   = "0"+hours;}
+      if (minutes < 10) {minutes = "0"+minutes;}
+      if (seconds < 10) {seconds = "0"+seconds;}
+  
+      return  hours+':'+minutes+':'+seconds;
+    }
+  }
 
 </script>
 </center>
