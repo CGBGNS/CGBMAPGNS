@@ -134,11 +134,7 @@
         metrics: [
           "oWaiting",
           "oInteracting",
-          "oAlerting",
-          "oMemberUsers",
-          "oActiveUsers",
-          "oOnQueueUsers",
-          "oOffQueueUsers"
+          "oUserPresences"
         ],
         filter: {
           type: "and",
@@ -152,7 +148,8 @@
         truncated: false,
         detailMetrics: [
           "oWaiting",
-          "oInteracting"
+          "oInteracting",
+          "oUserPresences"
         ]
       };
       
@@ -250,9 +247,7 @@
                             <th>Nombre de la cola</th>
                             <th>Tipo</th>
                             <th>Interacting</th>
-                            <th>Waiting</th>
-                            <th>Alerting</th>
-                            <th>Miembros</th>                        	
+                            <th>Waiting</th>                       	
                 <th>Longest Waiting</th>												
                           </tr>`;
         queueData.append(headerRow);
@@ -282,9 +277,7 @@
                         <td>${queues[group.queueId].name}</td>
                         <td>${mediaType}</td>
                         <td>${getMetricValue(dataItems, "oInteracting")}</td>
-                        <td>${iWaitingAPI2}</td>	
-              <td>${getMetricValue(dataItems, "oAlerting")}</td>
-                        <td>${getMetricValue(dataItems, "oMemberUsers")}</td>                    
+                        <td>${iWaitingAPI2}</td>	                  
               <td>${formatTime(lgtAPI2)}</td>			
                 
                       </tr>`;
