@@ -1,0 +1,360 @@
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="90"> <!-- Refresco cada 90 segs-->
+  <title>Visualizador de KPIs por cola</title>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <style>
+  table.redTable {
+  border: 1px solid #03010C;
+  background-color: #EEEEEE;
+  width: 70%;
+  text-align: left;
+  border-collapse: collapse;
+}
+table.redTable td, table.redTable th {
+  border: 1px solid #AAAAAA;
+  padding: 3px 2px;
+}
+table.redTable tbody td {
+  font-size: 13px;
+}
+table.redTable tr:nth-child(even) {
+  background: #F5D6D6;
+}
+table.redTable thead {
+  background: #F20F21;
+  background: -moz-linear-gradient(top, #f54b58 0%, #f32737 66%, #F20F21 100%);
+  background: -webkit-linear-gradient(top, #f54b58 0%, #f32737 66%, #F20F21 100%);
+  background: linear-gradient(to bottom, #f54b58 0%, #f32737 66%, #F20F21 100%);
+  border-bottom: 2px solid #444444;
+}
+table.redTable thead th {
+  font-size: 15px;
+  font-weight: bold;
+  color: #FFFFFF;
+  border-left: 2px solid #D0E4F5;
+}
+table.redTable thead th:first-child {
+  border-left: none;
+}
+
+table.redTable tfoot {
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFFFFF;
+  background: #D0E4F5;
+  background: -moz-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+  background: -webkit-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+  background: linear-gradient(to bottom, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+  border-top: 2px solid #444444;
+}
+table.redTable tfoot td {
+  font-size: 14px;
+}
+table.redTable tfoot .links {
+  text-align: right;
+}
+table.redTable tfoot .links a{
+  display: inline-block;
+  background: #1C6EA4;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+
+
+  </style>
+</head>
+<body>
+<center>
+<h1>Visualizador de KPIs por cola</h1>
+<button onclick="loadData()">Refrescar Datos</button>
+<br>
+<table class="redTable">
+<tbody id="queueData"></tbody>
+</table>
+<!--button onclick="refreshData()">Refrescar Datos</button-->
+
+<button onclick="loadData()">Refrescar Datos</button>
+<script>
+  const CLIENT_ID = '50999a4b-409c-4846-a249-4357e0e293a5'; 
+  const ENVIRONMENT = 'mypurecloud.de';
+  const API_ENDPOINT = 'https://api.mypurecloud.de/api/v2/analytics/queues/observations/query';
+  const API_ENDPOINT2 = 'https://api.mypurecloud.de/api/v2/analytics/conversations/activity/query';
+  const REDIRECT_URI = 'http://localhost:3000/statqueues'; 
+  
+  var gToken = getParameterByName('access_token');
+  const queues = {"a9aa307e-9683-4403-b7b5-db3cf1156cca": { name: "SI24_AUT-ASISTENCIAVIAJE_ESSD0201" },	  
+		"e1660c4a-62f4-4012-9254-7915eb2f9dd6": { name: "SI24_AUT-COMERCIAL_ESSD0101" },	  
+		"bbbdc008-a799-47c6-a64b-223c63a7d5eb": { name: "SI24_AUT-CSA_ESSD0205" },	 	
+		"b52d2a35-b6fb-4662-a473-3f58c065bfd5": { name: "SI24_AUT-EXPASISTENCIA_ESSD0201" },
+		"72937585-4272-420d-b7fc-dd271853615a": { name: "SI24_AUT-GESTCARTERA_ESSD0301" },	  		
+	    "02898175-6c56-4032-afd3-60e3351d19ee": { name: "SI24_AUT-PRESTACIONES_ESSD0205" },	  
+	    "857e77a5-0946-4d53-8c6d-8c017afaca87": { name: "SI24_AUT-RETENCION_ESSD0105" },	  
+		"278da8df-8be5-49ed-9479-5d8311203288": { name: "SI24_CENTROS-MEDICOS_ESSD9999" },	  
+	    "e38d5695-ef2c-4443-9d74-19be08b36e1a": { name: "SI24_CLUB-MAPFRE_ESSD0301" },	  
+		"592cc651-2aac-4a11-a1ec-12dd7ffb8cb9": { name: "SI24_FILIAL-MAPFRE_ESSD9999" },	
+		"e0545b81-bff7-4dfc-8fee-9012f9d15713": { name: "SI24_MAPFRE-ACI_ESSD0301" },	  
+		"b023b85d-fb96-4b8b-a430-98c1e68907ce": { name: "SI24_MULTIMAP_ESSD9999" },	  
+		"b8a3c8a7-a5d2-4513-8d5e-69b967637e63": { name: "SI24_PAT-COMERCIAL_ESSD0102" },	  
+	    "5fd9379a-edff-4c1b-bf95-e2bc4252fb9e": { name: "SI24_PAT-GESTCARTERA_ESSD0301" },	  
+	    "72889920-75ef-41d9-bc09-6fa8d402963f": { name: "SI24_PAT-PRESTACIONES_ESSD0206" },	  
+	    "ef1c84ff-63da-41d4-9b77-c892e05f9457": { name: "SI24_PAT-RETENCION_ESSD0105" },	  
+	    "6ccfa428-c818-4d6b-b415-e89c36c76515": { name: "SI24_PER-EXPPRESTACIONES_ESSD0203" },	  
+	    "13bdd5c4-e7f0-4a69-bd63-c4025e7455b8": { name: "SI24_SAL-COMERCIAL_ESSD0103" },	  
+	    "55cf09a5-999e-4343-ac4a-f02edaa8ae50": { name: "SI24_SAL-GESTCARTERA_ESSD0301" },	  
+	    "816bab0a-860b-4465-89b0-c12cc57a1a1f": { name: "SI24_SAL-PRESTACIONES_ESSD0203" },	  
+	    "3bc9cb93-91b8-4811-925a-abcf39e13211": { name: "SI24_SAL-RETENCION_ESSD0105" },	  
+	    "e163a627-66b9-49f5-ba4a-a10c72856187": { name: "SI24_VER-GESTCARTERAAUT_ESSD0301" },	  
+	    "b555978b-1564-4f33-bdd0-334d33d408e2": { name: "SI24_VER-GESTCARTERAPAT_ESSD0301" },	  
+	    "63abb269-7b1a-4a35-ad5b-cea2afd3f356": { name: "SI24_VER-PRESTACIONESAUT_ESSD0205" },	  
+	    "8de7b197-6915-47b0-98ef-4ec77ebcbd49": { name: "SI24_VER-PRESTACIONESPAT_ESSD0206" },	  
+	    "b42c60c7-6fb8-4c64-887b-999b365c26fe": { name: "SI24_VIA-COMERCIAL_ESSD0104" },	  
+	    "fab0af03-760e-40d8-b5a2-4f16caa62b5f": { name: "SI24_VID-COMERCIAL_ESSD0103" },	  
+	    "c761fc2f-4d7e-4d70-a62b-486efe18f65a": { name: "SI24_VID-RETENCION_ESSD0105" },	  
+		"3627522f-759c-4607-9364-80c31faf60ee": { name: "SI24_INGLES_ESSD0208" },	  
+		"68c35630-1cff-4996-83af-96070703fa0f": { name: "SI24_FRANCES_ESSD0208" },	  
+		"9462e18a-b5e3-4d5d-a827-dd4606a6c0fa": { name: "SI24_CATALAN_ESSD0208" },	  
+		"5ffb7756-a5f8-4d61-879b-72d34bbb15ed": { name: "SI24_ALEMAN_ESSD0208" }
+		  };
+					
+ 
+  const predicates = Object.keys(queues).map(queueId => (
+	{
+		dimension: "queueId",
+		value: queueId
+	}));
+  
+  const requestData1stAPI = {
+    metrics: [
+      "oWaiting",
+      "oInteracting",
+      "oAlerting",
+      "oMemberUsers",
+      "oActiveUsers",
+      "oOnQueueUsers",
+      "oOffQueueUsers"
+    ],
+    filter: {
+      type: "and",
+      clauses: [
+        {
+          type: "or",
+          predicates: predicates
+        }
+      ]
+    },
+    truncated: false,
+    detailMetrics: [
+      "oWaiting",
+      "oInteracting"
+    ]
+  };
+  
+   const requestData2ndAPI = {
+	"order": "asc",
+	"filter": {
+		"type": "and",
+		"clauses": [
+			{
+				"type": "or",
+				"predicates": predicates
+			}
+		],
+		"predicates": [
+			{
+				"dimension": "mediaType",
+				"value": "voice"
+			}
+		]
+	},
+	"groupBy": [
+		"queueId"
+	],
+	"peekAtLast": true,
+	"metrics": [
+		{
+			"metric": "oWaiting",
+			"details": true
+		}
+	],
+	"subscribe": true
+   }
+
+
+
+  function getParameterByName(name) {
+    name = name.replace(/[\\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\#&]" + name + "=([^&#]*)"),
+      results = regex.exec(location.hash);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+  }
+
+  function loadData() {
+
+    $.ajax({
+      url: API_ENDPOINT,
+      type: 'POST',
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader('Authorization', 'Bearer ' + gToken);
+      },
+      data: JSON.stringify(requestData1stAPI),
+      contentType: 'application/json',
+      success: function(data) {
+        getSecondAPIData(data);
+      }
+    });
+  }
+  
+  
+  function getSecondAPIData(data1stAPI){
+   
+    $.ajax({
+      url: API_ENDPOINT2,
+      type: 'POST',
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader('Authorization', 'Bearer ' + gToken);
+      },
+      data: JSON.stringify(requestData2ndAPI),
+      contentType: 'application/json',
+      success: function(data2ndAPI) {
+      displayData(data1stAPI,data2ndAPI);
+     }
+    });
+
+}
+
+
+function displayData(data1stAPI, data2ndAPI) {
+  const queueData = $("#queueData");
+  queueData.empty();
+
+  if (data1stAPI.results && Array.isArray(data1stAPI.results)) {
+    // Sort results by Queue ID and then by MediaType
+    const sortedResults = data1stAPI.results.sort((a, b) => {
+      const queueIdComparison = queues[a.group.queueId].name.localeCompare(queues[b.group.queueId].name);
+      if (queueIdComparison !== 0) {
+        return queueIdComparison;
+      }
+
+      return (a.group.mediaType || '').localeCompare(b.group.mediaType || '');
+    });
+
+    // Display header with Queue ID and MediaType columns
+    const headerRow = `<tr>
+                        <th>Nombre de la cola</th>
+                        <th>Tipo</th>
+                        <th>Interacting</th>
+                        <th>Waiting</th>
+                        <th>Alerting</th>
+                        <th>Miembros</th>                        	
+						<th>Longest Waiting</th>												
+                      </tr>`;
+    queueData.append(headerRow);
+	const undesiredMediaTypes = ["message", "chat", "email"];
+
+    // Renderización
+    sortedResults.forEach(result => {
+
+      const group = result.group;
+      const dataItems = result.data;
+      const mediaType = group.mediaType || '';
+      const longestWaitingDate = getObservationDate(dataItems);
+      let lgtAPI2 = ''
+      let iWaitingAPI2=0
+      if(data2ndAPI.results != undefined){
+        let g2 = data2ndAPI.results.filter(res => res.group.queueId== group.queueId && mediaType == 'voice');
+        if(g2 != null && g2.length > 0){
+          if(g2[0].entities != undefined && g2[0].entities.length > 0){
+          lgtAPI2 = g2[0].entities[0].activityDate;
+        }
+          if(g2[0].data != undefined && g2[0].data.length > 0){
+            iWaitingAPI2 = g2[0].data[0].count;
+          }
+        }
+      }
+      const row = `<tr>
+                    <td>${queues[group.queueId].name}</td>
+                    <td>${mediaType}</td>
+                    <td>${getMetricValue(dataItems, "oInteracting")}</td>
+                    <td>${iWaitingAPI2}</td>	
+					<td>${getMetricValue(dataItems, "oAlerting")}</td>
+                    <td>${getMetricValue(dataItems, "oMemberUsers")}</td>                    
+					<td>${formatTime(lgtAPI2)}</td>			
+						
+                  </tr>`;
+      
+if (!undesiredMediaTypes.includes(mediaType)) {
+  queueData.append(row);
+}
+      
+    });
+  } else {
+    console.error('Invalid response format:', data);
+  }
+}
+
+function getObservationDate(dataItems) {
+  const waitingData = dataItems.find(item => item.metric === "oWaiting");
+  if (waitingData && waitingData.observations && waitingData.observations.length > 0) {
+    return waitingData.observations[0].observationDate;
+  }
+  return '';
+}
+  
+
+function getMetricValue(dataItems, metricName) {
+  const metricData = dataItems.find(item => item.metric === metricName);
+  return metricData ? metricData.stats.count : 0;
+}
+
+  function refreshData() {
+    loadData();
+  }
+
+// Check if there is a hash in the URL
+if (window.location.hash) {
+  const token = getParameterByName('access_token');
+  console.log("token" + token);
+  loadData();
+} else {
+  console.log("REDIRECT_URI: " + REDIRECT_URI);
+  const queryStringData = {
+    response_type: "token",
+    client_id: CLIENT_ID,
+    redirect_uri: REDIRECT_URI
+  };
+  window.location.replace(`https://login.${ENVIRONMENT}/oauth/authorize?` + jQuery.param(queryStringData));
+}
+
+
+
+
+function formatTime(sTimeStamp) {
+    
+	if (!sTimeStamp || sTimeStamp.length === 0){
+		return "";
+	}else{	
+		var dtTimeStamp = new Date(sTimeStamp);
+		now = new Date();
+		var sec_num = (now - dtTimeStamp) / 1000;
+		var days    = Math.floor(sec_num / (3600 * 24));
+		var hours   = Math.floor((sec_num - (days * (3600 * 24)))/3600);
+		var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+		var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
+
+		if (hours   < 10) {hours   = "0"+hours;}
+		if (minutes < 10) {minutes = "0"+minutes;}
+		if (seconds < 10) {seconds = "0"+seconds;}
+
+		return  hours+':'+minutes+':'+seconds;
+	}
+}
+
+</script>
+</center>
+</body>
+</html>
