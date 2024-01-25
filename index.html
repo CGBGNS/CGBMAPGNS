@@ -248,7 +248,8 @@
                             <th>Tipo</th>
                             <th>Interacting</th>
                             <th>Waiting</th>                       	
-                <th>Longest Waiting</th>												
+                <th>Longest Waiting</th>
+                <th>Gestion Contacto</th>												
                           </tr>`;
         queueData.append(headerRow);
       const undesiredMediaTypes = ["message", "chat", "email"];
@@ -278,7 +279,8 @@
                         <td>${mediaType}</td>
                         <td>${getMetricValue(dataItems, "oInteracting")}</td>
                         <td>${iWaitingAPI2}</td>	                  
-              <td>${formatTime(lgtAPI2)}</td>			
+              <td>${formatTime(lgtAPI2)}</td>	
+              <td>${getMetricStateValue(dataItems, "09285548-27dc-4693-b348-26ce839850da")}</td>		
                 
                       </tr>`;
           
@@ -304,6 +306,11 @@
     function getMetricValue(dataItems, metricName) {
       const metricData = dataItems.find(item => item.metric === metricName);
       return metricData ? metricData.stats.count : 0;
+    }
+
+    function getMetricStateValue(dataItems, StateId) {
+      const StateData = dataItems.find(item => item.qualifier === StateId);
+      return StateData ? StateData.stats.count : 0;
     }
     
       function refreshData() {
