@@ -206,7 +206,7 @@ table.redTable tfoot .links a{
      url: API_ENDPOINT2,
      type: 'POST',
      beforeSend: function(xhr) {
-       xhr.setRequestHeader('Authorization', 'Bearer ' + Token);
+       xhr.setRequestHeader('Authorization', 'Bearer ' + token);
      },
      data: JSON.stringify(requestData2ndAPI),
      contentType: 'application/json',
