@@ -84,6 +84,7 @@ table.redTable tfoot .links a{
   const ENVIRONMENT = 'mypurecloud.de';
   const API_ENDPOINT = 'https://api.mypurecloud.de/api/v2/analytics/queues/observations/query';
   const API_ENDPOINT2 = 'https://api.mypurecloud.de/api/v2/analytics/conversations/activity/query';
+  const API_ENDPOINT3 = 'https://api.mypurecloud.de/api/v2/analytics/queues/observations/query';
   const REDIRECT_URI = 'https://CGBGNS.github.io/CGBMAPGNS/index.html'; 
   
   var gToken = getParameterByName('access_token');
@@ -132,8 +133,6 @@ table.redTable tfoot .links a{
     metrics: [
       "oWaiting",
       "oInteracting",
-      "oAlerting",
-      "oMemberUsers",
       "oActiveUsers",
       "oOnQueueUsers",
       "oOffQueueUsers"
@@ -182,7 +181,26 @@ table.redTable tfoot .links a{
 		}
 	],
 	"subscribe": true
-   }
+   };
+
+   const requestData3rdAPI = {
+    metrics: [
+      "oUserPresences"
+    ],
+    filter: {
+      type: "and",
+      clauses: [
+        {
+          type: "or",
+          predicates: predicates
+        }
+      ]
+    },
+    truncated: false,
+    detailMetrics: [
+      "oUserPresences"
+    ]
+  }
 
 
 
@@ -221,14 +239,31 @@ table.redTable tfoot .links a{
       data: JSON.stringify(requestData2ndAPI),
       contentType: 'application/json',
       success: function(data2ndAPI) {
-      displayData(data1stAPI,data2ndAPI);
+        getThirdAPIData(data1stAPI,data2ndAPI);
      }
     });
 
 }
 
+function getThirdAPIData(data1stAPI,data2ndAPI){
+   
+   $.ajax({
+     url: API_ENDPOINT3,
+     type: 'POST',
+     beforeSend: function(xhr) {
+       xhr.setRequestHeader('Authorization', 'Bearer ' + gToken);
+     },
+     data: JSON.stringify(requestData3rdAPI),
+     contentType: 'application/json',
+     success: function(data3rdAPI) {
+     displayData(data1stAPI,data2ndAPI,data3rdAPI);
+    }
+   });
 
-function displayData(data1stAPI, data2ndAPI) {
+}
+
+
+function displayData(data1stAPI, data2ndAPI,data3rdAPI) {
   const queueData = $("#queueData");
   queueData.empty();
 
@@ -249,7 +284,7 @@ function displayData(data1stAPI, data2ndAPI) {
                         <th>Tipo</th>
                         <th>Interacting</th>
                         <th>Waiting</th>
-                        <th>Alerting</th>
+                        <th>Contacto Gestion</th>
                         <th>Miembros</th>                        	
 						<th>Longest Waiting</th>												
                       </tr>`;
@@ -281,7 +316,7 @@ function displayData(data1stAPI, data2ndAPI) {
                     <td>${mediaType}</td>
                     <td>${getMetricValue(dataItems, "oInteracting")}</td>
                     <td>${iWaitingAPI2}</td>	
-					<td>${getMetricValue(dataItems, "oAlerting")}</td>
+					<td>${getSecondaryStatusMetricValue(dataItems, "09285548-27dc-4693-b348-26ce839850da")}</td>
                     <td>${getMetricValue(dataItems, "oMemberUsers")}</td>                    
 					<td>${formatTime(lgtAPI2)}</td>			
 						
@@ -311,6 +346,10 @@ function getMetricValue(dataItems, metricName) {
   return metricData ? metricData.stats.count : 0;
 }
 
+function getSecondaryStatusMetricValue(dataItems, qualifier) {
+  const metricData = dataItems.find(item => item.qualifier === qualifier);
+  return metricData ? metricData.stats.count : 0;
+}
   function refreshData() {
     loadData();
   }
