@@ -289,13 +289,14 @@ function displayData(data1stAPI, data2ndAPI,data3rdAPI) {
 						<th>Longest Waiting</th>												
                       </tr>`;
     queueData.append(headerRow);
-	const undesiredMediaTypes = ["message", "chat", "email"];
+	  const undesiredMediaTypes = ["message", "chat", "email"];
 
     // Renderización
     sortedResults.forEach(result => {
 
       const group = result.group;
       const dataItems = result.data;
+      const dataItems3rdAPI = data3rdAPI.results.data
       const mediaType = group.mediaType || '';
       const longestWaitingDate = getObservationDate(dataItems);
       let lgtAPI2 = ''
@@ -311,23 +312,24 @@ function displayData(data1stAPI, data2ndAPI,data3rdAPI) {
           }
         }
       }
+
       const row = `<tr>
                     <td>${queues[group.queueId].name}</td>
                     <td>${mediaType}</td>
                     <td>${getMetricValue(dataItems, "oInteracting")}</td>
                     <td>${iWaitingAPI2}</td>	
-					<td>${getSecondaryStatusMetricValue(dataItems, "09285548-27dc-4693-b348-26ce839850da")}</td>
+					<td>${getSecondaryStatusMetricValue(dataItems3rdAPI, "09285548-27dc-4693-b348-26ce839850da")}</td>
                     <td>${getMetricValue(dataItems, "oMemberUsers")}</td>                    
 					<td>${formatTime(lgtAPI2)}</td>			
 						
                   </tr>`;
       
-if (!undesiredMediaTypes.includes(mediaType)) {
-  queueData.append(row);
-}
+    if (!undesiredMediaTypes.includes(mediaType)) {
+   queueData.append(row);
+    }
       
     });
-  } else {
+    } else {
     console.error('Invalid response format:', data);
   }
 }
@@ -346,10 +348,11 @@ function getMetricValue(dataItems, metricName) {
   return metricData ? metricData.stats.count : 0;
 }
 
-function getSecondaryStatusMetricValue(dataItems, qualifier) {
-  const metricData = dataItems.find(item => item.qualifier === qualifier);
+function getSecondaryStatusMetricValue(dataItems3rdAPI, qualifier) {
+  const metricData = dataItems3rdAPI.find(item => item.qualifier === qualifier);
   return metricData ? metricData.stats.count : 0;
 }
+
   function refreshData() {
     loadData();
   }
