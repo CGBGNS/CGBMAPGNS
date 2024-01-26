@@ -260,9 +260,9 @@
 			               // const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
                       //console.log(rowData2)
                         const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oInteracting"), 0);
-                        console.log(sumInteracting);
+                        console.log('interacting'sumInteracting);
                         const sumWaiting = rowData.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
-                        console.log(sumWaiting)
+                        console.log('waiting'sumWaiting)
                         const activityDate = rowData.length > 0 ? rowData[0].entities[0].activityDate : "N/A";
                         //console.log(activityDate)
 			const OnQueue = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e08eaf1b-ee47-4fa9-a231-1200e284798f"), 0);
