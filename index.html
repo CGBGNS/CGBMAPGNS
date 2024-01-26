@@ -256,14 +256,14 @@
                       console.log(queueName.name);
                       const rowData = data1stAPI.results.filter(item => item.group.queueId === queueId);
                       console.log(rowData)
-			                const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
-                      console.log(rowData2)
+			               // const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
+                      //console.log(rowData2)
                         const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oInteracting"), 0);
                         console.log(sumInteracting)
-                        const sumWaiting = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
-                        console.log(sumWaiting)
-                        const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : "N/A";
-                        console.log(activityDate)
+                        //const sumWaiting = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
+                        //console.log(sumWaiting)
+                        //const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : "N/A";
+                        //console.log(activityDate)
 			const OnQueue = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e08eaf1b-ee47-4fa9-a231-1200e284798f"), 0);
       console.log(OnQueue)
       const Backoffice = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "6b3a63b6-ee47-4fa9-a231-1200e284798f"), 0);
@@ -275,8 +275,8 @@
                         return `<tr>
                                   <td>${queueName.name}</td>
                                   <td>${sumInteracting}</td>
-				                          <td>${sumWaiting}</td>
-                                  <td>${formatTime(activityDate)}</td>
+				                          <td>${sumInteracting}</td>
+                                  <td>${sumInteracting}</td>
 				                          <td>${OnQueue}</td>
                                   <td>${Backoffice}</td>
                                   <td>${Contacto}</td>
