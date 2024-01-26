@@ -261,7 +261,8 @@
                       //console.log(rowData2)
                         const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oInteracting"), 0);
                         console.log('interacting',sumInteracting);
-                        const sumWaiting = rowData.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
+                        const sumWaiting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oWaiting"), 0);
+                        //const sumWaiting = rowData.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
                         console.log('waiting',sumWaiting)
                         //const activityDate = rowData.length > 0 ? rowData[0].entities[0].activityDate : "N/A";
                         //console.log(activityDate)
