@@ -233,15 +233,21 @@
     
       if (data1stAPI.results && Array.isArray(data1stAPI.results)) {
         // Sort results by Queue ID and then by MediaType
-        const sortedResults = data1stAPI.results.sort((a, b) => {
+       /* const sortedResults = data1stAPI.results.sort((a, b) => {
           const queueIdComparison = queues[a.group.queueId].name.localeCompare(queues[b.group.queueId].name);
           if (queueIdComparison !== 0) {
             return queueIdComparison;
           }
     
           return (a.group.mediaType || '').localeCompare(b.group.mediaType || '');
-        });
+        });*/
     
+        const sortedResults = data1stAPI.results.sort((a, b) => {
+        const queueIdA = a.group.queueId;
+        const queueIdB = b.group.queueId;
+        return queues[queueIdA].name.localeCompare(queues[queueIdB].name);
+    });
+
         // Display header with Queue ID and MediaType columns
         const headerRow = `<tr>
                             <th>Nombre de la cola</th>
