@@ -228,12 +228,12 @@
     function displayData(data1stAPI, data2ndAPI) {
       const queueData = $("#queueData");
       queueData.empty();
-
+      app.get('/', (req, res) => {
       const uniqueQueueIds = [...new Set(data1stAPI.results.map(item => item.group.queueId))];
 
       const tableHtml = `<table border="1">
                       <tr>
-                        <th>Nombre de la cola</th>
+                        <th>11Nombre de la cola</th>
                         <th>Interacting</th>
 <th>Waiting</th>
 <th>Longest Waiting</th>
@@ -271,6 +271,8 @@
                                 </tr>`;
                       }).join('')}
                     </table>`;
+                    res.send(tableHtml);
+});
 
       if (data1stAPI.results && Array.isArray(data1stAPI.results)) {
         // Sort results by Queue ID and then by MediaType
