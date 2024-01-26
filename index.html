@@ -230,6 +230,7 @@
     function displayData(data1stAPI, data2ndAPI) {
       const queueData = $("#queueData");
       queueData.empty();
+      const uniqueQueueIds = [...new Set(data1stAPI.results.map(item => item.group.queueId))];
     
       if (data1stAPI.results && Array.isArray(data1stAPI.results)) {
         // Sort results by Queue ID and then by MediaType
@@ -241,14 +242,22 @@
     
           return (a.group.mediaType || '').localeCompare(b.group.mediaType || '');
         });
+    
 
-        const groupedResults = groupResultsByQueueId(data1stAPI.results);
-        const sortedResults = data1stAPI.results.sort((a, b) => {
-        const queueIdA = a.group.queueId;
-        const queueIdB = b.group.queueId;
-        return queues[queueIdA].name.localeCompare(queues[queueIdB].name);
-        
-    });
+        const tableHtml = `<table border="1">
+                     <tr>
+                       <th>ID de Cola</th>
+                       <th>Sumatorio de oInteracting</th>
+                     </tr>
+                     ${uniqueQueueIds.map(queueId => {
+                       const rowData = jsonData.results.filter(item => item.group.queueId === queueId);
+                       const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, 'oInteracting'), 0);
+                       return `<tr>
+                                 <td>${queueId}</td>
+                                 <td>${sumInteracting}</td>
+                               </tr>`;
+                     }).join('')}
+                   </table>`;
 
         // Display header with Queue ID and MediaType columns
         const headerRow = `<tr>
@@ -267,12 +276,10 @@
       const undesiredMediaTypes = ["message", "chat", "email"];
     
         // Renderización
-        groupedResults.forEach(groupedResult => {
-      const queueId = groupedResult.queueId;
-      const dataItems = groupedResult.dataItems;
-
+        sortedResults.forEach(result => {
+    
           const group = result.group;
-          //const dataItems = result.data;
+          const dataItems = result.data;
           const mediaType = group.mediaType || '';
           const longestWaitingDate = getObservationDate(dataItems);
           let lgtAPI2 = ''
@@ -288,9 +295,8 @@
               }
             }
           }
-          
           const row = `<tr>
-                        <td>${queues[queueId].name}</td>
+                        <td>${queues[group.queueId].name}</td>
                         <td>${getMetricValue(dataItems, "oInteracting")}</td>
                         <td>${iWaitingAPI2}</td>	                  
               <td>${formatTime(lgtAPI2)}</td>	
@@ -331,25 +337,6 @@
       const StateData = dataItems.find(item => item.qualifier === StateId);
       return StateData ? StateData.stats.count : 0;
     }
-
-              function groupResultsByQueueId(results) {
-                const groupedResults = {};
-
-                  results.forEach(result => {
-                  const queueId = result.group.queueId;
-
-                  if (!groupedResults[queueId]) {
-                      groupedResults[queueId] = {
-                       queueId: queueId,
-                      dataItems: []
-                                                };
-                                                }
-
-             groupedResults[queueId].dataItems.push(result.data);
-    });
-
-          return Object.values(groupedResults);
-          }
     
       function refreshData() {
         loadData();
