@@ -235,17 +235,19 @@
       
       
       const uniqueQueueIds = [...new Set(data1stAPI.results.map(item => item.group.queueId))];
-
-      console.log('Unique Queue IDs:', uniqueQueueIds);
-      console.log('API1:', data1stAPI);
-      console.log('API2:', data2ndAPI);
+      // Ordenar uniqueQueueIds según el nombre de la cola
+    uniqueQueueIds.sort((queueId1, queueId2) => {
+    const queueName1 = queues[queueId1] ? queues[queueId1].name : '';
+    const queueName2 = queues[queueId2] ? queues[queueId2].name : '';
+    return queueName1.localeCompare(queueName2);
+});
       const tableHtml = `<table border="1">
       <tr>
                         <th>Nombre de la cola</th>
                         <th>Interacting</th>
 <th>Waiting</th>
 <th>Longest Waiting</th>
-<th>On Queue</th>
+<th>On Queue(idle+interacting)</th>
 <th>Backoffice</th>
 <th>Gestion Contacto</th>
 <th>Descanso</th>
@@ -254,30 +256,21 @@
                       </tr>
                       ${uniqueQueueIds.map(queueId => {
 			                const queueName = queues[queueId] || 'Desconocido'; // Obtiene el nombre de la cola del mapeo
-                      console.log(queueName.name);
                       const rowData = data1stAPI.results.filter(item => item.group.queueId === queueId);
-                      console.log(rowData);
 			               // const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
                       //console.log(rowData2)
                         const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oInteracting"), 0);
-                        console.log('interacting',sumInteracting);
                         const sumWaiting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oWaiting"), 0);
-                        //const sumWaiting = rowData.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
+                        //const sumWaiting2 = rowData.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
                         console.log('waiting',sumWaiting)
                         //const activityDate = rowData.length > 0 ? rowData[0].entities[0].activityDate : "N/A";
                         //console.log(activityDate)
 			const OnQueue = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e08eaf1b-ee47-4fa9-a231-1200e284798f"), 0);
-      console.log(OnQueue);
       const Backoffice = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "6b3a63b6-ee47-4fa9-a231-1200e284798f"), 0);
       const Contacto = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e08eaf1b-ee47-4fa9-a231-26ce839850da"), 0);
       const Descanso = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "46d1ad03-8828-4161-a6b8-dcec7a42d006"), 0);
       const PV = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e1e0e671-d01b-4c41-8a5d-b870641b9c0a"), 0);
       const Otros = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "3fd96123-badb-4f69-bc03-1b1ccc6d8014"), 0);
-      console.log(Backoffice);
-      console.log(Contacto);
-      console.log(Descanso);
-      console.log(PV);
-      console.log(Otros);
 
                         return `<tr>
                                   <td>${queueName.name}</td>
