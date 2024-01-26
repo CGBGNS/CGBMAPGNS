@@ -132,7 +132,6 @@
       
       const requestData1stAPI = {
         metrics: [
-          "oWaiting",
           "oInteracting",
           "oUserPresences"
         ],
@@ -147,7 +146,6 @@
         },
         truncated: false,
         detailMetrics: [
-          "oWaiting",
           "oInteracting",
           "oUserPresences"
         ]
@@ -230,8 +228,50 @@
     function displayData(data1stAPI, data2ndAPI) {
       const queueData = $("#queueData");
       queueData.empty();
+
       const uniqueQueueIds = [...new Set(data1stAPI.results.map(item => item.group.queueId))];
-    
+
+      const tableHtml = `<table border="1">
+                      <tr>
+                        <th>Nombre de la cola</th>
+                        <th>Interacting</th>
+<th>Waiting</th>
+<th>Longest Waiting</th>
+<th>Backoffice</th>
+<th>Gestion Contacto</th>
+<th>Descanso</th>
+<th>Pausa visual</th>
+<th>Otros</th>
+                      </tr>
+                      ${uniqueQueueIds.map(queueId => {
+			const queueName = queues[queueId] || 'Desconocido'; // Obtiene el nombre de la cola del mapeo
+                        const rowData = data1stAPI.results.filter(item => item.group.queueId === queueId);
+			const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
+                        const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, 'oInteracting'), 0);
+                        const sumWaiting = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, 'oWaiting'), 0);
+                        const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : 'N/A';
+			const OnQueue = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, 'e08eaf1b-ee47-4fa9-a231-1200e284798f'), 0);
+      const Backoffice = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, '6b3a63b6-ee47-4fa9-a231-1200e284798f'), 0);
+      const Contacto = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, 'e08eaf1b-ee47-4fa9-a231-26ce839850da'), 0);
+      const Descanso = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, '46d1ad03-8828-4161-a6b8-dcec7a42d006'), 0);
+      const PV = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, 'e1e0e671-d01b-4c41-8a5d-b870641b9c0a'), 0);
+      const Otros = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, '3fd96123-badb-4f69-bc03-1b1ccc6d8014'), 0);
+
+                        return `<tr>
+                                  <td>${queueName.name}</td>
+                                  <td>${sumInteracting}</td>
+				                          <td>${sumWaiting}</td>
+                                  <td>${formatTime(activityDate)}</td>
+				                          <td>${OnQueue}</td>
+                                  <td>${Backoffice}</td>
+                                  <td>${Contacto}</td>
+                                  <td>${Descanso}</td>
+                                  <td>${PV}</td>
+                                  <td>${Otros}</td>
+                                </tr>`;
+                      }).join('')}
+                    </table>`;
+
       if (data1stAPI.results && Array.isArray(data1stAPI.results)) {
         // Sort results by Queue ID and then by MediaType
         const sortedResults = data1stAPI.results.sort((a, b) => {
@@ -244,22 +284,7 @@
         });
     
 
-        const tableHtml = `<table border="1">
-                     <tr>
-                       <th>ID de Cola</th>
-                       <th>Sumatorio de oInteracting</th>
-                     </tr>
-                     ${uniqueQueueIds.map(queueId => {
-                       const rowData = data1stAPI.results.filter(item => item.group.queueId === queueId);
-                       const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, 'oInteracting'), 0);
-                       return `<tr>
-                                 <td>${queueId}</td>
-                                 <td>${sumInteracting}</td>
-                               </tr>`;
-                     }).join('')}
-                   </table>`;
-
-        // Display header with Queue ID and MediaType columns
+        // Display header with Queue ID
         const headerRow = `<tr>
                             <th>Nombre de la cola</th>
                             <th>Interacting</th>
@@ -272,6 +297,11 @@
                 <th>Pausa Visual</th>
                 <th>Otros</th>												
                           </tr>`;
+
+                          
+                          
+
+
         queueData.append(headerRow);
       const undesiredMediaTypes = ["callback","message", "chat", "email"];
     
@@ -300,12 +330,12 @@
                         <td>${getMetricValue(dataItems, "oInteracting")}</td>
                         <td>${iWaitingAPI2}</td>	                  
               <td>${formatTime(lgtAPI2)}</td>	
-              <td>${getMetricStateValue(dataItems, "e08eaf1b-ee47-4fa9-a231-1200e284798f")}</td>
-              <td>${getMetricStateValue(dataItems, "6b3a63b6-5634-4aff-8838-674ffadb23de")}</td>
-              <td>${getMetricStateValue(dataItems, "09285548-27dc-4693-b348-26ce839850da")}</td>
-              <td>${getMetricStateValue(dataItems, "46d1ad03-8828-4161-a6b8-dcec7a42d006")}</td>
-              <td>${getMetricStateValue(dataItems, "e1e0e671-d01b-4c41-8a5d-b870641b9c0a")}</td>
-              <td>${getMetricStateValue(dataItems, "3fd96123-badb-4f69-bc03-1b1ccc6d8014")+getMetricStateValue(dataItems, "6a3af858-942f-489d-9700-5f9bcdcdae9b")+getMetricStateValue(dataItems, "bbdff279-7ae1-48ea-bade-7831d7234c64")+getMetricStateValue(dataItems, "d2390a99-8546-bad9-8f0a-219548e8aeb0")}</td>		
+              <td>${getMetricStateValue2(dataItems, "e08eaf1b-ee47-4fa9-a231-1200e284798f")}</td>
+              <td>${getMetricStateValue2(dataItems, "6b3a63b6-5634-4aff-8838-674ffadb23de")}</td>
+              <td>${getMetricStateValue2(dataItems, "09285548-27dc-4693-b348-26ce839850da")}</td>
+              <td>${getMetricStateValue2(dataItems, "46d1ad03-8828-4161-a6b8-dcec7a42d006")}</td>
+              <td>${getMetricStateValue2(dataItems, "e1e0e671-d01b-4c41-8a5d-b870641b9c0a")}</td>
+              <td>${getMetricStateValue2(dataItems, "3fd96123-badb-4f69-bc03-1b1ccc6d8014")+getMetricStateValue2(dataItems, "6a3af858-942f-489d-9700-5f9bcdcdae9b")+getMetricStateValue2(dataItems, "bbdff279-7ae1-48ea-bade-7831d7234c64")+getMetricStateValue2(dataItems, "d2390a99-8546-bad9-8f0a-219548e8aeb0")}</td>		
                 
                       </tr>`;
           
@@ -333,11 +363,12 @@
       return metricData ? metricData.stats.count : 0;
     }
 
-    function getMetricStateValue(dataItems, StateId) {
+    function getMetricStateValue2(dataItems, StateId) {
       const StateData = dataItems.find(item => item.qualifier === StateId);
       return StateData ? StateData.stats.count : 0;
     }
     
+
       function refreshData() {
         loadData();
       }
@@ -360,6 +391,16 @@
     
     
     
+    function getWaitingValue(dataItems, metricName) {
+  const metricData = dataItems.find(item => item.metric === metricName);
+  return metricData ? metricData.count : 0;
+}
+
+function getMetricStatusValue(dataItems, metricName) {
+  const metricData = dataItems.find(item => item.qualifier === metricName);
+  return metricData ? metricData.stats.count : 0;
+}
+
     function formatTime(sTimeStamp) {
         
       if (!sTimeStamp || sTimeStamp.length === 0){
