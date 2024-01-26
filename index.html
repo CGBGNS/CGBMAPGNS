@@ -231,6 +231,8 @@
   
       const uniqueQueueIds = [...new Set(data1stAPI.results.map(item => item.group.queueId))];
 
+      console.log('Unique Queue IDs:', uniqueQueueIds);
+
       const tableHtml = `<table border="1">
                       <tr>
                         <th>11Nombre de la cola</th>
@@ -245,9 +247,9 @@
 <th>Otros</th>
                       </tr>
                       ${uniqueQueueIds.map(queueId => {
-			const queueName = queues[queueId] || 'Desconocido'; // Obtiene el nombre de la cola del mapeo
-                        const rowData = data1stAPI.results.filter(item => item.group.queueId === queueId);
-			const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
+			                const queueName = queues[queueId] || 'Desconocido'; // Obtiene el nombre de la cola del mapeo
+                      const rowData = data1stAPI.results.filter(item => item.group.queueId === queueId);
+			                const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
                         const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, 'oInteracting'), 0);
                         const sumWaiting = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, 'oWaiting'), 0);
                         const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : 'N/A';
