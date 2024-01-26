@@ -250,7 +250,7 @@
                        <th>Sumatorio de oInteracting</th>
                      </tr>
                      ${uniqueQueueIds.map(queueId => {
-                       const rowData = jsonData.results.filter(item => item.group.queueId === queueId);
+                       const rowData = data1stAPI.results.filter(item => item.group.queueId === queueId);
                        const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, 'oInteracting'), 0);
                        return `<tr>
                                  <td>${queueId}</td>
