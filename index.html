@@ -229,103 +229,54 @@
       const queueData = $("#queueData");
       queueData.empty();
   
+      const uniqueQueueIds = [...new Set(data1stAPI.results.map(item => item.group.queueId))];
 
-      if (data1stAPI.results && Array.isArray(data1stAPI.results)) {
-        // Sort results by Queue ID and then by MediaType
-        const sortedResults = data1stAPI.results.sort((a, b) => {
-          const queueIdComparison = queues[a.group.queueId].name.localeCompare(queues[b.group.queueId].name);
-          if (queueIdComparison !== 0) {
-            return queueIdComparison;
-          }
-    
-          return (a.group.mediaType || '').localeCompare(b.group.mediaType || '');
-        });
-    
+      const tableHtml = `<table border="1">
+                      <tr>
+                        <th>11Nombre de la cola</th>
+                        <th>Interacting</th>
+<th>Waiting</th>
+<th>Longest Waiting</th>
+<th>Backoffice</th>
+<th>Gestion Contacto</th>
+<th>Descanso</th>
+<th>Pausa visual</th>
+<th>Otros</th>
+                      </tr>
+                      ${uniqueQueueIds.map(queueId => {
+			const queueName = queues[queueId] || 'Desconocido'; // Obtiene el nombre de la cola del mapeo
+                        const rowData = data1stAPI.results.filter(item => item.group.queueId === queueId);
+			const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
+                        const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, 'oInteracting'), 0);
+                        const sumWaiting = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, 'oWaiting'), 0);
+                        const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : 'N/A';
+			const OnQueue = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, 'e08eaf1b-ee47-4fa9-a231-1200e284798f'), 0);
+      const Backoffice = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, '6b3a63b6-ee47-4fa9-a231-1200e284798f'), 0);
+      const Contacto = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, 'e08eaf1b-ee47-4fa9-a231-26ce839850da'), 0);
+      const Descanso = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, '46d1ad03-8828-4161-a6b8-dcec7a42d006'), 0);
+      const PV = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, 'e1e0e671-d01b-4c41-8a5d-b870641b9c0a'), 0);
+      const Otros = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, '3fd96123-badb-4f69-bc03-1b1ccc6d8014'), 0);
 
-        // Display header with Queue ID
-        const headerRow = `<tr>
-                            <th>Nombre de la cola</th>
-                            <th>Interacting</th>
-                            <th>Waiting</th>                       	
-                <th>Longest Waiting</th>
-                <th>On Queue (idle+interacting)</th>
-                <th>Gestión BackOffice</th>
-                <th>Gestión contacto</th>
-                <th>Descanso</th>
-                <th>Pausa Visual</th>
-                <th>Otros</th>												
-                          </tr>`;
-
-                          
-                          
-
-
-        queueData.append(headerRow);
-      const undesiredMediaTypes = ["callback","message", "chat", "email"];
-    
-        // Renderización
-        sortedResults.forEach(result => {
-    
-          const group = result.group;
-          const dataItems = result.data;
-          const mediaType = group.mediaType || '';
-          const longestWaitingDate = getObservationDate(dataItems);
-          let lgtAPI2 = ''
-          let iWaitingAPI2=0
-          if(data2ndAPI.results != undefined){
-            let g2 = data2ndAPI.results.filter(res => res.group.queueId== group.queueId && mediaType == 'voice');
-            if(g2 != null && g2.length > 0){
-              if(g2[0].entities != undefined && g2[0].entities.length > 0){
-              lgtAPI2 = g2[0].entities[0].activityDate;
-            }
-              if(g2[0].data != undefined && g2[0].data.length > 0){
-                iWaitingAPI2 = g2[0].data[0].count;
-              }
-            }
-          }
-          const row = `<tr>
-                        <td>${queues[group.queueId].name}</td>
-                        <td>${getMetricValue(dataItems, "oInteracting")}</td>
-                        <td>${iWaitingAPI2}</td>	                  
-              <td>${formatTime(lgtAPI2)}</td>	
-              <td>${getMetricStateValue2(dataItems, "e08eaf1b-ee47-4fa9-a231-1200e284798f")}</td>
-              <td>${getMetricStateValue2(dataItems, "6b3a63b6-5634-4aff-8838-674ffadb23de")}</td>
-              <td>${getMetricStateValue2(dataItems, "09285548-27dc-4693-b348-26ce839850da")}</td>
-              <td>${getMetricStateValue2(dataItems, "46d1ad03-8828-4161-a6b8-dcec7a42d006")}</td>
-              <td>${getMetricStateValue2(dataItems, "e1e0e671-d01b-4c41-8a5d-b870641b9c0a")}</td>
-              <td>${getMetricStateValue2(dataItems, "3fd96123-badb-4f69-bc03-1b1ccc6d8014")+getMetricStateValue2(dataItems, "6a3af858-942f-489d-9700-5f9bcdcdae9b")+getMetricStateValue2(dataItems, "bbdff279-7ae1-48ea-bade-7831d7234c64")+getMetricStateValue2(dataItems, "d2390a99-8546-bad9-8f0a-219548e8aeb0")}</td>		
-                
-                      </tr>`;
-          
-    if (!undesiredMediaTypes.includes(mediaType)) {
-      queueData.append(row);
-    }
-          
-        });
-      } else {
-        console.error('Invalid response format:', data);
-      }
-    }
-    
-    function getObservationDate(dataItems) {
-      const waitingData = dataItems.find(item => item.metric === "oWaiting");
-      if (waitingData && waitingData.observations && waitingData.observations.length > 0) {
-        return waitingData.observations[0].observationDate;
-      }
-      return '';
-    }
-      
-    
+                        return `<tr>
+                                  <td>${queueName.name}</td>
+                                  <td>${sumInteracting}</td>
+				                          <td>${sumWaiting}</td>
+                                  <td>${formatTime(activityDate)}</td>
+				                          <td>${OnQueue}</td>
+                                  <td>${Backoffice}</td>
+                                  <td>${Contacto}</td>
+                                  <td>${Descanso}</td>
+                                  <td>${PV}</td>
+                                  <td>${Otros}</td>
+                                </tr>`;
+                      }).join('')}
+                    </table>`;
+                  }
+                  
     function getMetricValue(dataItems, metricName) {
       const metricData = dataItems.find(item => item.metric === metricName);
       return metricData ? metricData.stats.count : 0;
     }
-
-    function getMetricStateValue2(dataItems, StateId) {
-      const StateData = dataItems.find(item => item.qualifier === StateId);
-      return StateData ? StateData.stats.count : 0;
-    }
-    
 
       function refreshData() {
         loadData();
@@ -384,4 +335,3 @@ function getMetricStatusValue(dataItems, metricName) {
     </center>
     </body>
     </html>
-    
