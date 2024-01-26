@@ -241,11 +241,12 @@
     
           return (a.group.mediaType || '').localeCompare(b.group.mediaType || '');
         });*/
-    
+        const groupedResults = groupResultsByQueueId(data1stAPI.results);
         const sortedResults = data1stAPI.results.sort((a, b) => {
         const queueIdA = a.group.queueId;
         const queueIdB = b.group.queueId;
         return queues[queueIdA].name.localeCompare(queues[queueIdB].name);
+        
     });
 
         // Display header with Queue ID and MediaType columns
@@ -265,11 +266,27 @@
       const undesiredMediaTypes = ["message", "chat", "email"];
     
         // Renderización
-        sortedResults.forEach(result => {
-    
+        groupedResults.forEach(groupedResult => {
+      const queueId = groupedResult.queueId;
+      const dataItems = groupedResult.dataItems;
+
+      const interacting = getMetricValue(dataItems, "oInteracting");
+      const waiting = getMetricValue(dataItems, "oWaiting");
+      const longestWaiting = getObservationDate(dataItems);
+      const onQueue = getMetricStateValue(dataItems, "e08eaf1b-ee47-4fa9-a231-1200e284798f");
+      const gestionBackOffice = getMetricStateValue(dataItems, "6b3a63b6-5634-4aff-8838-674ffadb23de");
+      const gestionContacto = getMetricStateValue(dataItems, "09285548-27dc-4693-b348-26ce839850da");
+      const descanso = getMetricStateValue(dataItems, "46d1ad03-8828-4161-a6b8-dcec7a42d006");
+      const pausaVisual = getMetricStateValue(dataItems, "e1e0e671-d01b-4c41-8a5d-b870641b9c0a");
+      const otros = getMetricStateValue(dataItems, "3fd96123-badb-4f69-bc03-1b1ccc6d8014") +
+        getMetricStateValue(dataItems, "6a3af858-942f-489d-9700-5f9bcdcdae9b") +
+        getMetricStateValue(dataItems, "bbdff279-7ae1-48ea-bade-7831d7234c64") +
+        getMetricStateValue(dataItems, "d2390a99-8546-bad9-8f0a-219548e8aeb0");
+
+        /*
           const group = result.group;
           const dataItems = result.data;
-          const mediaType = group.mediaType || '';
+          const mediaType = group.mediaType || '';*/
           const longestWaitingDate = getObservationDate(dataItems);
           let lgtAPI2 = ''
           let iWaitingAPI2=0
@@ -284,6 +301,7 @@
               }
             }
           }
+          /*
           const row = `<tr>
                         <td>${queues[group.queueId].name}</td>
                         <td>${getMetricValue(dataItems, "oInteracting")}</td>
@@ -296,7 +314,20 @@
               <td>${getMetricStateValue(dataItems, "e1e0e671-d01b-4c41-8a5d-b870641b9c0a")}</td>
               <td>${getMetricStateValue(dataItems, "3fd96123-badb-4f69-bc03-1b1ccc6d8014")+getMetricStateValue(dataItems, "6a3af858-942f-489d-9700-5f9bcdcdae9b")+getMetricStateValue(dataItems, "bbdff279-7ae1-48ea-bade-7831d7234c64")+getMetricStateValue(dataItems, "d2390a99-8546-bad9-8f0a-219548e8aeb0")}</td>		
                 
-                      </tr>`;
+                      </tr>`;*/
+
+                      const row = `<tr>
+                    <td>${queues[queueId].name}</td>
+                    <td>${interacting}</td>
+                    <td>${waiting}</td>
+                    <td>${longestWaiting}</td>
+                    <td>${onQueue}</td>
+                    <td>${gestionBackOffice}</td>
+                    <td>${gestionContacto}</td>
+                    <td>${descanso}</td>
+                    <td>${pausaVisual}</td>
+                    <td>${otros}</td>
+                  </tr>`;
           
     if (!undesiredMediaTypes.includes(mediaType)) {
       queueData.append(row);
@@ -326,6 +357,25 @@
       const StateData = dataItems.find(item => item.qualifier === StateId);
       return StateData ? StateData.stats.count : 0;
     }
+
+    function groupResultsByQueueId(results) {
+  const groupedResults = {};
+
+  results.forEach(result => {
+    const queueId = result.group.queueId;
+
+    if (!groupedResults[queueId]) {
+      groupedResults[queueId] = {
+        queueId: queueId,
+        dataItems: []
+      };
+    }
+
+    groupedResults[queueId].dataItems.push(result.data);
+  });
+
+  return Object.values(groupedResults);
+}
     
       function refreshData() {
         loadData();
