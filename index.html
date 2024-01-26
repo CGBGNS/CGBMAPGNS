@@ -253,7 +253,8 @@
                 <th>Gestión BackOffice</th>
                 <th>Gestión contacto</th>
                 <th>Descanso</th>
-                <th>Pausa Visual</th>											
+                <th>Pausa Visual</th>
+                <th>Otros</th>												
                           </tr>`;
         queueData.append(headerRow);
       const undesiredMediaTypes = ["message", "chat", "email"];
@@ -288,7 +289,8 @@
               <td>${getMetricStateValue(dataItems, "6b3a63b6-5634-4aff-8838-674ffadb23de")}</td>
               <td>${getMetricStateValue(dataItems, "09285548-27dc-4693-b348-26ce839850da")}</td>
               <td>${getMetricStateValue(dataItems, "46d1ad03-8828-4161-a6b8-dcec7a42d006")}</td>
-              <td>${getMetricStateValue(dataItems, "e1e0e671-d01b-4c41-8a5d-b870641b9c0a")}</td>		
+              <td>${getMetricStateValue(dataItems, "e1e0e671-d01b-4c41-8a5d-b870641b9c0a")}</td>
+              <td>${getMetricStateValue(dataItems, "3fd96123-badb-4f69-bc03-1b1ccc6d8014")+getMetricStateValue(dataItems, "6a3af858-942f-489d-9700-5f9bcdcdae9b")+getMetricStateValue(dataItems, "bbdff279-7ae1-48ea-bade-7831d7234c64")+getMetricStateValue(dataItems, "d2390a99-8546-bad9-8f0a-219548e8aeb0")}</td>		
                 
                       </tr>`;
           
