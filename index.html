@@ -9502,6 +9502,7 @@ const data2 ={
                       </tr>
                       ${uniqueQueueIds.map(queueId => {
 			                const queueName = queues[queueId] || 'Desconocido'; // Obtiene el nombre de la cola del mapeo
+                      console.log(queueName.name);
                       const rowData = data1.results.filter(item => item.group.queueId === queueId);
 			                const rowData2 = data2.results.filter(item => item.group.queueId === queueId);
                         const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, 'oInteracting'), 0);
