@@ -136,6 +136,7 @@
       const requestData1stAPI = {
         metrics: [
           "oInteracting",
+          "oWaiting",
           "oUserPresences"
         ],
         filter: {
@@ -150,6 +151,7 @@
         truncated: false,
         detailMetrics: [
           "oInteracting",
+          "oWaiting",
           "oUserPresences"
         ]
       };
@@ -260,9 +262,9 @@
                       //console.log(rowData2)
                         const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oInteracting"), 0);
                         console.log(sumInteracting);
-                        //const sumWaiting = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
-                        //console.log(sumWaiting)
-                        //const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : "N/A";
+                        const sumWaiting = rowData.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
+                        console.log(sumWaiting)
+                        const activityDate = rowData.length > 0 ? rowData2[0].entities[0].activityDate : "N/A";
                         //console.log(activityDate)
 			const OnQueue = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e08eaf1b-ee47-4fa9-a231-1200e284798f"), 0);
       console.log(OnQueue);
@@ -280,8 +282,8 @@
                         return `<tr>
                                   <td>${queueName.name}</td>
                                   <td>${sumInteracting}</td>
-				                          <td>${sumInteracting}</td>
-                                  <td>${sumInteracting}</td>
+				                          <td>${onwaiting}</td>
+                                  <td>${formatTime(activityDate)}</td>
 				                          <td>${OnQueue}</td>
                                   <td>${Backoffice}</td>
                                   <td>${Contacto}</td>
@@ -296,7 +298,7 @@
       tablaContainer.innerHTML = tableHtml;
 
                     }
-                    
+
     function getMetricValue(dataItems, metricName) {
       const metricData = dataItems.find(item => item.metric === metricName);
       return metricData ? metricData.stats.count : 0;
