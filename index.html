@@ -263,7 +263,7 @@
                         console.log('interacting'sumInteracting);
                         const sumWaiting = rowData.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
                         console.log('waiting'sumWaiting)
-                        const activityDate = rowData.length > 0 ? rowData[0].entities[0].activityDate : "N/A";
+                        //const activityDate = rowData.length > 0 ? rowData[0].entities[0].activityDate : "N/A";
                         //console.log(activityDate)
 			const OnQueue = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e08eaf1b-ee47-4fa9-a231-1200e284798f"), 0);
       console.log(OnQueue);
@@ -281,8 +281,8 @@
                         return `<tr>
                                   <td>${queueName.name}</td>
                                   <td>${sumInteracting}</td>
-				                          <td>${onwaiting}</td>
-                                  <td>${formatTime(activityDate)}</td>
+				                          <td>${sumWaiting}</td>
+                                  <td>${sumWaiting}</td>
 				                          <td>${OnQueue}</td>
                                   <td>${Backoffice}</td>
                                   <td>${Contacto}</td>
