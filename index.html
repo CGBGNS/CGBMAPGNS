@@ -9446,10 +9446,21 @@ const data2 ={
       }
     
       function loadData() {
-    
-        displayData(data1,data2);
-console.log('displaying data:' data1);
-console.log('displaying data:' data2);
+
+        $.ajax({
+          url: API_ENDPOINT,
+          type: 'POST',
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + gToken);
+          },
+          data: JSON.stringify(requestData1stAPI),
+          contentType: 'application/json',
+          success: function(data) {
+            console.log(data);
+            getSecondAPIData(data);
+          }
+        });
+
         
       }
       
@@ -9465,6 +9476,7 @@ console.log('displaying data:' data2);
           data: JSON.stringify(requestData2ndAPI),
           contentType: 'application/json',
           success: function(data2ndAPI) {
+            console.log(data2ndAPI);
           displayData(data1stAPI,data2ndAPI);
          }
         });
