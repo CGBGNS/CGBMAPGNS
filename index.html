@@ -179,47 +179,9 @@
         }
       ],
       "subscribe": true
-       }
-    
-    
-    
-      function getParameterByName(name) {
-        name = name.replace(/[\\[]/, "\\[").replace(/[\]]/, "\\]");
-        var regex = new RegExp("[\\#&]" + name + "=([^&#]*)"),
-          results = regex.exec(location.hash);
-        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-      }
-    
-      function loadData() {
-    
-        $.ajax({
-          url: API_ENDPOINT,
-          type: 'POST',
-          beforeSend: function(xhr) {
-            xhr.setRequestHeader('Authorization', 'Bearer ' + gToken);
-          },
-          data: JSON.stringify(requestData1stAPI),
-          contentType: 'application/json',
-          success: function(data) {
-            getSecondAPIData(data);
-          }
-        });
-      }
-      
-      
-      function getSecondAPIData(data1stAPI){
-       
-        $.ajax({
-          url: API_ENDPOINT2,
-          type: 'POST',
-          beforeSend: function(xhr) {
-            xhr.setRequestHeader('Authorization', 'Bearer ' + gToken);
-          },
-          data: JSON.stringify(requestData2ndAPI),
-          contentType: 'application/json',
-          success: function(data2ndAPI) {
-            
-const data1 = {
+       };
+
+       const data1 = {
     "systemToOrganizationMappings": {
         "OFFLINE": [
             "ccf3c10a-aa2c-4845-8e8d-f59fa48c58e5"
@@ -9472,18 +9434,47 @@ const data2 ={
     ],
     "subscriptionExpirationDate": "2024-01-26T17:49:56.141Z"
 };
-          displayData(data1,data2);
+    
+    
+    
+      function getParameterByName(name) {
+        name = name.replace(/[\\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\#&]" + name + "=([^&#]*)"),
+          results = regex.exec(location.hash);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+      }
+    
+      function loadData() {
+    
+        displayData(data1,data2)
+
+        
+      }
+      
+      
+      function getSecondAPIData(data1stAPI){
+       
+        $.ajax({
+          url: API_ENDPOINT2,
+          type: 'POST',
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + gToken);
+          },
+          data: JSON.stringify(requestData2ndAPI),
+          contentType: 'application/json',
+          success: function(data2ndAPI) {
+          displayData(data1stAPI,data2ndAPI);
          }
         });
     
     }
     
     
-    function displayData(data1, data2) {
+    function displayData(data1stAPI, data2ndAPI) {
       const queueData = $("#queueData");
       queueData.empty();
   
-      const uniqueQueueIds = [...new Set(data1.results.map(item => item.group.queueId))];
+      const uniqueQueueIds = [...new Set(data1stAPI.results.map(item => item.group.queueId))];
 
       console.log('Unique Queue IDs:', uniqueQueueIds);
 
@@ -9503,8 +9494,8 @@ const data2 ={
                       ${uniqueQueueIds.map(queueId => {
 			                const queueName = queues[queueId] || 'Desconocido'; // Obtiene el nombre de la cola del mapeo
                       console.log(queueName.name);
-                      const rowData = data1.results.filter(item => item.group.queueId === queueId);
-			                const rowData2 = data2.results.filter(item => item.group.queueId === queueId);
+                      const rowData = data1stAPI.results.filter(item => item.group.queueId === queueId);
+			                const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
                         const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, 'oInteracting'), 0);
                         const sumWaiting = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, 'oWaiting'), 0);
                         const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : 'N/A';
