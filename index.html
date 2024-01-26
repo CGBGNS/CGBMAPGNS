@@ -237,6 +237,7 @@
                         <th>Interacting</th>
 <th>Waiting</th>
 <th>Longest Waiting</th>
+<th>On Queue</th>
 <th>Backoffice</th>
 <th>Gestion Contacto</th>
 <th>Descanso</th>
@@ -272,7 +273,7 @@
                       }).join('')}
                     </table>`;
                   }
-                  
+
     function getMetricValue(dataItems, metricName) {
       const metricData = dataItems.find(item => item.metric === metricName);
       return metricData ? metricData.stats.count : 0;
