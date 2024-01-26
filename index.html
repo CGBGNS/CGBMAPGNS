@@ -245,7 +245,6 @@
         // Display header with Queue ID and MediaType columns
         const headerRow = `<tr>
                             <th>Nombre de la cola</th>
-                            <th>Tipo</th>
                             <th>Interacting</th>
                             <th>Waiting</th>                       	
                 <th>Longest Waiting</th>
@@ -281,7 +280,6 @@
           }
           const row = `<tr>
                         <td>${queues[group.queueId].name}</td>
-                        <td>${mediaType}</td>
                         <td>${getMetricValue(dataItems, "oInteracting")}</td>
                         <td>${iWaitingAPI2}</td>	                  
               <td>${formatTime(lgtAPI2)}</td>	
