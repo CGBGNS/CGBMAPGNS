@@ -311,9 +311,11 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
 
     function getMetricLWTValue(dataItems, metricName) {
       const observationDataMetric = dataItems.find(item => item.metric === "oWaiting");
+      console.log(observationDataMetric);
   if (observationDataMetric && observationDataMetric.observations) {
     // Obtener el valor máximo de observationData
     const maxObservationData = Math.max(...observationDataMetric.observations.map(obs => obs.observationDate));
+    console.log(maxObservationData);
     return maxObservationData;
   }
   return null;
