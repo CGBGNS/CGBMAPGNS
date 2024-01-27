@@ -168,7 +168,7 @@
         "predicates": [
           {
             "dimension": "mediaType",
-            "value": "voice"
+            "value": "callback"
           }
         ]
       },
@@ -241,6 +241,14 @@
     const queueName2 = queues[queueId2] ? queues[queueId2].name : '';
     return queueName1.localeCompare(queueName2);
 });
+
+const uniqueQueueIds2 = [...new Set(data2stAPI.results.map(item => item.group.queueId))];
+      // Ordenar uniqueQueueIds según el nombre de la cola
+    uniqueQueueIds2.sort((queueId1, queueId2) => {
+    const queueName1 = queues[queueId1] ? queues[queueId1].name : '';
+    const queueName2 = queues[queueId2] ? queues[queueId2].name : '';
+    return queueName1.localeCompare(queueName2);
+});
       const tableHtml = `<table border="1">
       <tr>
                         <th>Nombre de la cola</th>
@@ -257,7 +265,7 @@
                       ${uniqueQueueIds.map(queueId => {
 			                const queueName = queues[queueId] || 'Desconocido'; // Obtiene el nombre de la cola del mapeo
                       const rowData = data1stAPI.results.filter(item => item.group.queueId === queueId);
-			               // const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
+			                const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
                       //console.log(rowData2)
                         const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oInteracting"), 0);
                         const sumWaiting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oWaiting"), 0);
