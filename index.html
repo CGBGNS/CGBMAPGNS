@@ -271,7 +271,7 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                       const rowData = data1stAPI.results.filter(item => item.group.queueId === queueId);
                       const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oInteracting"), 0);
                       const sumWaiting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oWaiting"), 0);
-                      const activityDate1 = rowData.length > 0 ? rowData[0].data[0].observations[0].observationDate : "";
+                      const maxObservationData = Math.max(...rowData.map(item => getMetricLWTValue(item.data, "observationData")), "");
                         const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
                         const sumWaiting2 = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
                         const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : "";
@@ -287,7 +287,7 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                                   <td>${sumInteracting}</td>
 				                          <td>${sumWaiting}</td>
                                   <td>${sumWaiting2}</td>
-                                  <td>${formatTime(activityDate1)}</td>
+                                  <td>${formatTime(maxObservationData)}</td>
                                   <td>${formatTime(activityDate)}</td>
 				                          <td>${OnQueue}</td>
                                   <td>${Backoffice}</td>
@@ -307,6 +307,11 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
     function getMetricValue(dataItems, metricName) {
       const metricData = dataItems.find(item => item.metric === metricName);
       return metricData ? metricData.stats.count : 0;
+    }
+
+    function getMetricValue(dataItems, metricName) {
+      const metricData = dataItems.find(item => item.metric === metricName);
+      return metricData ? metricData.observations.observationDate : "";
     }
 
       function refreshData() {
