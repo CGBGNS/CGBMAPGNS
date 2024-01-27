@@ -309,10 +309,15 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
       return metricData ? metricData.stats.count : 0;
     }
 
-    function getMetricValue(dataItems, metricName) {
-      const metricData = dataItems.find(item => item.metric === metricName);
-      return metricData ? metricData.observations.observationDate : "";
-    }
+    function getMetricLWTValue(dataItems, metricName) {
+      const observationDataMetric = data.find(item => item.metric === "oWaiting");
+  if (observationDataMetric && observationDataMetric.observations) {
+    // Obtener el valor máximo de observationData
+    const maxObservationData = Math.max(...observationDataMetric.observations.map(obs => obs.observationDate));
+    return maxObservationData;
+  }
+  return null;
+}
 
       function refreshData() {
         loadData();
