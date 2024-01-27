@@ -202,7 +202,6 @@
           data: JSON.stringify(requestData1stAPI),
           contentType: 'application/json',
           success: function(data) {
-            console.log(data);
             getSecondAPIData(data);
           }
         });
@@ -222,7 +221,7 @@
           data: JSON.stringify(requestData2ndAPI),
           contentType: 'application/json',
           success: function(data2ndAPI) {
-            console.log(data2ndAPI);
+            
           displayData(data1stAPI,data2ndAPI);
          }
         });
@@ -240,7 +239,7 @@
     const queueName2 = queues[queueId2] ? queues[queueId2].name : '';
     return queueName1.localeCompare(queueName2);
 });
-console.log(data2ndAPI);
+
 if (data2ndAPI.results && data2ndAPI.results.some(item => item.group && item.group.queueId !== undefined)) {
 const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.queueId))];
       // Ordenar uniqueQueueIds según el nombre de la cola
@@ -314,7 +313,7 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
       console.log(observationDataMetric);
   if (observationDataMetric && observationDataMetric.observations) {
     // Obtener el valor máximo de observationData
-    const maxObservationData = Math.max(...observationDataMetric.observations.map(obs => obs.observationDate));
+    const maxObservationData = Math.min(...observationDataMetric.observations.map(obs => new Date(obs.observationDate)));
     console.log(maxObservationData);
     return maxObservationData;
   }
