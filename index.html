@@ -270,15 +270,13 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                       const rowData = data1stAPI.results.filter(item => item.group.queueId === queueId);
                       const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oInteracting"), 0);
                       const sumWaiting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oWaiting"), 0);
+                      const sumWaiting2 = 0;
+                        const activityDate = "";
                       if (data2ndAPI.results && data2ndAPI.results.length > 0 && data2ndAPI.results.every(item => item.group && item.group.queueId)) {
 			                const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
                         const sumWaiting2 = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
-                        const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : "";}
-                        else
-                        {
-                        const sumWaiting2 = 0;
-                        const activityDate = "";
-                        };
+                        const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : "";
+                      };
                         //console.log(activityDate)
 			const OnQueue = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e08eaf1b-ee47-4fa9-a231-1200e284798f"), 0);
       const Backoffice = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "6b3a63b6-ee47-4fa9-a231-1200e284798f"), 0);
