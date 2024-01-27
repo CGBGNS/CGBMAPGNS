@@ -281,7 +281,8 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                         console.log(sumWaiting2);
                         console.log(activityDate);
                       };
-                        //console.log(activityDate)
+                      console.log(sumWaiting2);
+                        console.log(activityDate);
 			const OnQueue = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e08eaf1b-ee47-4fa9-a231-1200e284798f"), 0);
       const Backoffice = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "6b3a63b6-ee47-4fa9-a231-1200e284798f"), 0);
       const Contacto = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e08eaf1b-ee47-4fa9-a231-26ce839850da"), 0);
