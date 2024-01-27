@@ -254,6 +254,7 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                         <th>Nombre de la cola</th>
                         <th>Interacting</th>
 <th>Waiting</th>
+<th>Waiting2</th>
 <th>Longest Waiting</th>
 <th>On Queue(idle+interacting)</th>
 <th>Backoffice</th>
@@ -269,8 +270,9 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                       //console.log(rowData2)
                         const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oInteracting"), 0);
                         const sumWaiting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oWaiting"), 0);
-                        //const sumWaiting2 = rowData.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
+                        const sumWaiting2 = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
                         console.log('waiting',sumWaiting)
+                        console.log('waiting2',sumWaiting2)
                         //const activityDate = rowData.length > 0 ? rowData[0].entities[0].activityDate : "N/A";
                         //console.log(activityDate)
 			const OnQueue = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e08eaf1b-ee47-4fa9-a231-1200e284798f"), 0);
@@ -284,6 +286,7 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                                   <td>${queueName.name}</td>
                                   <td>${sumInteracting}</td>
 				                          <td>${sumWaiting}</td>
+                                  <td>${sumWaiting2}</td>
                                   <td>${sumWaiting}</td>
 				                          <td>${OnQueue}</td>
                                   <td>${Backoffice}</td>
