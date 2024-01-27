@@ -248,7 +248,9 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
     const queueName1 = queues[queueId1] ? queues[queueId1].name : '';
     const queueName2 = queues[queueId2] ? queues[queueId2].name : '';
     return queueName1.localeCompare(queueName2);
-});};
+}
+)
+};
       const tableHtml = `<table border="1">
       <tr>
                         <th>Nombre de la cola</th>
