@@ -242,7 +242,7 @@
     return queueName1.localeCompare(queueName2);
 });
 console.log(data2ndAPI);
-if (data2ndAPI.results && data2ndAPI.results.length > 0 && data2ndAPI.results.some(item => item.group && item.group.queueId)) {
+if (data2ndAPI.results && data2ndAPI.results.some(item => item.group && item.group.queueId !== undefined)) {
 const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.queueId))];
       // Ordenar uniqueQueueIds según el nombre de la cola
     uniqueQueueIds2.sort((queueId1, queueId2) => {
@@ -273,7 +273,7 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                       const sumWaiting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oWaiting"), 0);
                       const sumWaiting2 = 0;
                         const activityDate = "";
-                      if (data2ndAPI.results && data2ndAPI.results.length > 0 && data2ndAPI.results.some(item => item.group && item.group.queueId)) {
+                      if (data2ndAPI.results && data2ndAPI.results.some(item => item.group && item.group.queueId !== undefined)) {
 			                const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
                       console.log(rowData2);
                         const sumWaiting2 = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
