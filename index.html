@@ -242,7 +242,7 @@
     return queueName1.localeCompare(queueName2);
 });
 
-const uniqueQueueIds2 = [...new Set(data2stAPI.results.map(item => item.group.queueId))];
+const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.queueId))];
       // Ordenar uniqueQueueIds según el nombre de la cola
     uniqueQueueIds2.sort((queueId1, queueId2) => {
     const queueName1 = queues[queueId1] ? queues[queueId1].name : '';
