@@ -273,11 +273,9 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                       const sumWaiting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oWaiting"), 0);
                         const activityDate = "";
                         const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
-                      console.log(rowData2);
                         const sumWaiting2 = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
                         console.log(sumWaiting2);
                       if (data2ndAPI.results && data2ndAPI.results.some(item => item.group && item.group.queueId !== undefined)) {
-			                
                         const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : "";
                         console.log(activityDate);
                       };
