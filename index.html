@@ -163,13 +163,13 @@
             "type": "or",
             "predicates": predicates
           }
-        ]/*,
+        ],
         "predicates": [
           {
             "dimension": "mediaType",
-            "value": "callback"
+            "value": "voice"
           }
-        ]*/
+        ]
       },
       "groupBy": [
         "queueId"
@@ -269,8 +269,8 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
 			                const queueName = queues[queueId] || 'Desconocido'; // Obtiene el nombre de la cola del mapeo
                       const rowData = data1stAPI.results.filter(item => item.group.queueId === queueId);
                       const sumInteracting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oInteracting"), 0);
-                      const sumWaiting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oWaiting"), 0);
-                      const maxObservationData = Math.max(...rowData.map(item => getMetricLWTValue(item.data, "observationData")), "");
+                      //const sumWaiting = rowData.reduce((sum, item) => sum + getMetricValue(item.data, "oWaiting"), 0);
+                      //const maxObservationData = Math.max(...rowData.map(item => getMetricLWTValue(item.data, "observationData")), "");
                         const rowData2 = data2ndAPI.results.filter(item => item.group.queueId === queueId);
                         const sumWaiting2 = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
                         const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : "";
@@ -284,9 +284,7 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                         return `<tr>
                                   <td>${queueName.name}</td>
                                   <td>${sumInteracting}</td>
-				                          <td>${sumWaiting}</td>
                                   <td>${sumWaiting2}</td>
-                                  <td>${formatTime(maxObservationData)}</td>
                                   <td>${formatTime(activityDate)}</td>
 				                          <td>${OnQueue}</td>
                                   <td>${Backoffice}</td>
