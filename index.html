@@ -275,8 +275,8 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                         const sumWaiting2 = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
                         const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : "";
 			const OnQueue = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e08eaf1b-ee47-4fa9-a231-1200e284798f"), 0);
-      const Backoffice = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "6b3a63b6-ee47-4fa9-a231-1200e284798f"), 0);
-      const Contacto = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e08eaf1b-ee47-4fa9-a231-26ce839850da"), 0);
+      const Backoffice = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "6b3a63b6-5634-4aff-8838-674ffadb23de"), 0);
+      const Contacto = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "09285548-27dc-4693-b348-26ce839850da"), 0);
       const Descanso = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "46d1ad03-8828-4161-a6b8-dcec7a42d006"), 0);
       const PV = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e1e0e671-d01b-4c41-8a5d-b870641b9c0a"), 0);
       const Otros = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "3fd96123-badb-4f69-bc03-1b1ccc6d8014"), 0)+rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "6a3af858-942f-489d-9700-5f9bcdcdae9b"), 0)+rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "bbdff279-7ae1-48ea-bade-7831d7234c64"), 0)+rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "d2390a99-8546-bad9-8f0a-219548e8aeb0"), 0);
