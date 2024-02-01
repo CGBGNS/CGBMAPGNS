@@ -99,8 +99,7 @@
           "02898175-6c56-4032-afd3-60e3351d19ee": { name: "SI24_AUT-PRESTACIONES_ESSD0205" },	  
           "857e77a5-0946-4d53-8c6d-8c017afaca87": { name: "SI24_AUT-RETENCION_ESSD0105" },	  
         "278da8df-8be5-49ed-9479-5d8311203288": { name: "SI24_CENTROS-MEDICOS_ESSD9999" },	  
-          "e38d5695-ef2c-4443-9d74-19be08b36e1a": { name: "SI24_CLUB-MAPFRE_ESSD0301" },	  
-        "592cc651-2aac-4a11-a1ec-12dd7ffb8cb9": { name: "SI24_FILIAL-MAPFRE_ESSD9999" },	
+          "e38d5695-ef2c-4443-9d74-19be08b36e1a": { name: "SI24_CLUB-MAPFRE_ESSD0301" },	  	
         "e0545b81-bff7-4dfc-8fee-9012f9d15713": { name: "SI24_MAPFRE-ACI_ESSD0301" },	  
         "b023b85d-fb96-4b8b-a430-98c1e68907ce": { name: "SI24_MULTIMAP_ESSD9999" },	  
         "b8a3c8a7-a5d2-4513-8d5e-69b967637e63": { name: "SI24_PAT-COMERCIAL_ESSD0102" },	  
@@ -136,6 +135,7 @@
         metrics: [
           "oInteracting",
           "oWaiting",
+          "oUserRoutingStatuses",
           "oUserPresences"
         ],
         filter: {
@@ -253,10 +253,11 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
       const tableHtml = `<table border="1">
       <tr>
                         <th>Nombre de la cola</th>
-                        <th>Interacting</th>
-<th>Waiting</th>
-<th>Longest Waiting</th>
-<th>On Queue(idle+interacting)</th>
+                        <th>Interactuando</th>
+<th>En espera</th>
+<th>Mas tiempo en espera</th>
+<th>Agentes interactuando</th>
+<th>Ociosos</th>
 <th>Backoffice</th>
 <th>Gestion Contacto</th>
 <th>Descanso</th>
@@ -273,6 +274,8 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                         const sumWaiting2 = rowData2.reduce((sum, item) => sum + getWaitingValue(item.data, "oWaiting"), 0);
                         const activityDate = rowData2.length > 0 ? rowData2[0].entities[0].activityDate : "";
 			const OnQueue = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "e08eaf1b-ee47-4fa9-a231-1200e284798f"), 0);
+      const AgInteracting = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "INTERACTING"), 0);
+      const AgIdle = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "IDLE"), 0);
       const Backoffice = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "6b3a63b6-5634-4aff-8838-674ffadb23de"), 0);
       const Contacto = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "09285548-27dc-4693-b348-26ce839850da"), 0);
       const Descanso = rowData.reduce((sum, item) => sum + getMetricStatusValue(item.data, "46d1ad03-8828-4161-a6b8-dcec7a42d006"), 0);
@@ -284,7 +287,8 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                                   <td>${sumInteracting}</td>
                                   <td>${sumWaiting2}</td>
                                   <td>${formatTime(activityDate)}</td>
-				                          <td>${OnQueue}</td>
+				                          <td>${AgInteracting}</td>
+                                  <td>${AgIdle}</td>
                                   <td>${Backoffice}</td>
                                   <td>${Contacto}</td>
                                   <td>${Descanso}</td>
