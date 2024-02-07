@@ -4,7 +4,7 @@
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta http-equiv="refresh" content="90"> <!-- Refresco cada 90 segs-->
+      <!--meta http-equiv="refresh" content="90"--> <!-- Refresco cada 90 segs-->
       <title>Visualizador de KPIs por cola</title>
       <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
       <style>
@@ -191,7 +191,7 @@
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
       }
     
-      function loadData() {
+      async function loadData() {
 
         $.ajax({
           url: API_ENDPOINT,
@@ -205,7 +205,10 @@
             getSecondAPIData(data);
           }
         });
-
+		setTimeout(function(){ 
+            loadData();
+        }, 15000); 
+     	
         
       }
       
@@ -233,7 +236,7 @@
       
       
       const uniqueQueueIds = [...new Set(data1stAPI.results.map(item => item.group.queueId))];
-      // Ordenar uniqueQueueIds según el nombre de la cola
+      // Ordenar uniqueQueueIds seg�n el nombre de la cola
     uniqueQueueIds.sort((queueId1, queueId2) => {
     const queueName1 = queues[queueId1] ? queues[queueId1].name : '';
     const queueName2 = queues[queueId2] ? queues[queueId2].name : '';
@@ -242,7 +245,7 @@
 
 if (data2ndAPI.results && data2ndAPI.results.some(item => item.group && item.group.queueId !== undefined)) {
 const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.queueId))];
-      // Ordenar uniqueQueueIds según el nombre de la cola
+      // Ordenar uniqueQueueIds seg�n el nombre de la cola
     uniqueQueueIds2.sort((queueId1, queueId2) => {
     const queueName1 = queues[queueId1] ? queues[queueId1].name : '';
     const queueName2 = queues[queueId2] ? queues[queueId2].name : '';
@@ -255,11 +258,11 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
                         <th>Nombre de la cola</th>
                         <th>Interactuando</th>
 <th>En espera</th>
-<th>Mas tiempo en espera</th>
+<th>M&aacutes tiempo en espera</th>
 <th>Agentes interactuando</th>
 <th>Ociosos</th>
-<th>Gestión back office</th>
-<th>Gestión Contacto</th>
+<th>Gesti&oacuten back office</th>
+<th>Gesti&oacuten Contacto</th>
 <th>Descanso</th>
 <th>Pausa visual</th>
 <th>Otros</th>
@@ -312,7 +315,7 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
       const observationDataMetric = dataItems.find(item => item.metric === "oWaiting");
       console.log(observationDataMetric);
   if (observationDataMetric && observationDataMetric.observations) {
-    // Obtener el valor máximo de observationData
+    // Obtener el valor m�ximo de observationData
     const maxObservationData = Math.min(...observationDataMetric.observations.map(obs => new Date(obs.observationDate)));
     console.log(maxObservationData);
     return maxObservationData;
@@ -328,7 +331,12 @@ const uniqueQueueIds2 = [...new Set(data2ndAPI.results.map(item => item.group.qu
     if (window.location.hash) {
       const token = getParameterByName('access_token');
       console.log("token" + token);
+	//while (true){
+	
       loadData();
+    // 
+	 //}
+
     } else {
       console.log("REDIRECT_URI: " + REDIRECT_URI);
       const queryStringData = {
